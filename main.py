@@ -142,5 +142,29 @@ def search_books():
     print(f"Filtered books: {filtered_books}")  # Log de depuração
     return jsonify(filtered_books)
 
+@app.route('/add-book', methods=['POST'])
+def add_book():
+    data = request.json
+    title = data.get('title')
+    url = data.get('url')
+    image = data.get('image')
+
+    # Validar URL do Google Drive
+    if not re.match(r'https://drive\.google\.com/file/d/.+/view\?usp=drivesdk', url):
+        return jsonify({'error': 'O link do livro deve ser um link válido do Google Drive.'}), 400
+
+    # Verificar se os campos necessários estão presentes
+    if not all([title, url, image]):
+        return jsonify({'error': 'Campos title, url e image são obrigatórios.'}), 400
+
+    new_book = {
+        "title": title,
+        "url": url,
+        "image": image
+    }
+
+    books.append(new_book)
+    return jsonify({'message': 'Livro adicionado com sucesso!'}), 201
+
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
