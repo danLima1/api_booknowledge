@@ -211,7 +211,7 @@ def add_book():
     image = data.get('image')
 
     # Validar URL do Google Drive
-    if not re.match(r'https://drive\.google\.com/file/d/.+/view\?usp=drivesdk', url):
+    if not re.match(r'https://drive\.google\.com/file/d/.+/view\?usp=(drivesdk|drive_link)', url):
         return jsonify({'error': 'O link do livro deve ser um link válido do Google Drive.'}), 400
 
     # Verificar se os campos necessários estão presentes
