@@ -180,6 +180,9 @@ insert_initial_books()
 @app.route('/search', methods=['GET'])
 def search_books():
     query = request.args.get('query', '').lower()
+    page = int(request.args.get('page', 1))  # Página atual (padrão é 1)
+    per_page = 24  # Número de livros por página
+
     conn = connect_db()
     cursor = conn.cursor()
 
@@ -191,16 +194,28 @@ def search_books():
     books = cursor.fetchall()
     conn.close()
 
+    total_books = len(books)
+    total_pages = (total_books + per_page - 1) // per_page  # Calcular o número total de páginas
+
+    # Paginação: Selecionar os livros da página atual
+    start = (page - 1) * per_page
+    end = start + per_page
+    books_on_page = books[start:end]
+
     # Convertendo os resultados para um dicionário
     books_list = []
-    for book in books:
+    for book in books_on_page:
         books_list.append({
             'title': book[1],
             'url': book[2],
             'image': book[3]
         })
 
-    return jsonify(books_list)
+    return jsonify({
+        'books': books_list,
+        'total_pages': total_pages,
+        'current_page': page
+    })
 
 
 @app.route('/add-book', methods=['POST'])
