@@ -1,17 +1,14 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 import sqlite3
-import re
 
 app = Flask(__name__)
 CORS(app)  # Permitir CORS
-
 
 # Função para conectar ao banco de dados SQLite
 def connect_db():
     conn = sqlite3.connect('books.db')
     return conn
-
 
 # Função para criar a tabela de livros
 def create_table():
@@ -28,21 +25,8 @@ def create_table():
     conn.commit()
     conn.close()
 
-
-    conn = connect_db()
-    cursor = conn.cursor()
-
-    # Verificar se já existem livros no banco de dados
-    cursor.execute('SELECT COUNT(*) FROM books')
-    count = cursor.fetchone()[0]
-
-    conn.close()
-
-
-# Inicialização do banco de dados e inserção dos livros iniciais
+# Inicialização do banco de dados
 create_table()
-
-
 
 @app.route('/search', methods=['GET'])
 def search_books():
@@ -83,7 +67,6 @@ def search_books():
         'total_pages': total_pages,
         'current_page': page
     })
-
 
 @app.route('/add-book', methods=['POST'])
 def add_book():
