@@ -3,14 +3,14 @@ from flask_cors import CORS
 import sqlite3
 
 app = Flask(__name__)
-CORS(app)  # Permitir CORS
+CORS(app) 
 
-# Função para conectar ao banco de dados SQLite
+
 def connect_db():
     conn = sqlite3.connect('books.db')
     return conn
 
-# Função para criar a tabela de livros
+
 def create_table():
     conn = connect_db()
     cursor = conn.cursor()
@@ -25,7 +25,7 @@ def create_table():
     conn.commit()
     conn.close()
 
-# Função para inserir os livros iniciais no banco de dados
+
 def insert_initial_books():
     initial_books = [
         {
@@ -165,15 +165,15 @@ def insert_initial_books():
 
     conn.close()
 
-# Inicialização do banco de dados e inserção dos livros iniciais
+
 create_table()
 insert_initial_books()
 
 @app.route('/search', methods=['GET'])
 def search_books():
     query = request.args.get('query', '').lower()
-    page = int(request.args.get('page', 1))  # Página atual (padrão é 1)
-    per_page = 24  # Número de livros por página
+    page = int(request.args.get('page', 1))  
+    per_page = 24  
 
     conn = connect_db()
     cursor = conn.cursor()
@@ -187,7 +187,7 @@ def search_books():
     conn.close()
 
     total_books = len(books)
-    total_pages = (total_books + per_page - 1) // per_page  # Calcular o número total de páginas
+    total_pages = (total_books + per_page - 1) // per_page 
 
     start = (page - 1) * per_page
     end = start + per_page
